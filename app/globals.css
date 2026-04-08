@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  @apply border-slate-800;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+}
+
+.container-shell {
+  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+}
+
+.tech-panel {
+  @apply rounded-2xl border border-slate-700/70 bg-card/70 backdrop-blur;
+}
+
+.subtle-grid {
+  background-size: 48px 48px;
+  @apply bg-hero-grid;
+}
