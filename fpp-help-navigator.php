@@ -21,11 +21,11 @@ if (!defined('FPP_HN_PLUGIN_FILE')) {
 }
 
 if (!defined('FPP_HN_PLUGIN_DIR')) {
-    define('FPP_HN_PLUGIN_DIR', plugin_dir_path(FPP_HN_PLUGIN_FILE));
+    define('FPP_HN_PLUGIN_DIR', plugin_dir_path(__FILE__));
 }
 
 if (!defined('FPP_HN_PLUGIN_URL')) {
-    define('FPP_HN_PLUGIN_URL', plugin_dir_url(FPP_HN_PLUGIN_FILE));
+    define('FPP_HN_PLUGIN_URL', plugin_dir_url(__FILE__));
 }
 
 function fpp_hn_activate(): void
@@ -38,36 +38,31 @@ function fpp_hn_deactivate(): void
     // Reserved for deactivation cleanup.
 }
 
+function fpp_hn_render_admin_page(): void
+{
+    echo '<div class="wrap"><h1>' . esc_html__('Навигатор помощи ФПП', 'fpp-help-navigator') . '</h1><p>' . esc_html__('Плагин активен.', 'fpp-help-navigator') . '</p></div>';
+}
+
+function fpp_hn_register_admin_menu(): void
+{
+    add_menu_page(
+        __('Навигатор помощи ФПП', 'fpp-help-navigator'),
+        __('Навигатор помощи ФПП', 'fpp-help-navigator'),
+        'manage_options',
+        'fpp-help-navigator',
+        'fpp_hn_render_admin_page',
+        'dashicons-heart',
+        26
+    );
+}
+
+function fpp_hn_render_shortcode(): string
+{
+    return 'Навигатор помощи ФПП подключён';
+}
+
 register_activation_hook(FPP_HN_PLUGIN_FILE, 'fpp_hn_activate');
 register_deactivation_hook(FPP_HN_PLUGIN_FILE, 'fpp_hn_deactivate');
 
-add_action('admin_menu', static function (): void {
-    add_menu_page(
-        'Навигатор помощи ФПП',
-        'Навигатор помощи ФПП',
-        'manage_options',
-        'fpp-help-navigator',
-        static function (): void {
-            echo '<div class="wrap"><h1>Навигатор помощи ФПП</h1><p>Плагин активен.</p></div>';
-        },
-        'dashicons-heart'
-    );
-});
-
-add_shortcode('fpp_help_navigator', static function (): string {
-    return 'Навигатор помощи ФПП подключён';
-});
-
-$main_plugin_class = FPP_HN_PLUGIN_DIR . 'includes/class-fpp-hn-plugin.php';
-if (file_exists($main_plugin_class)) {
-    require_once $main_plugin_class;
-
-    if (class_exists('FPP_HN_Plugin') && method_exists('FPP_HN_Plugin', 'instance')) {
-        add_action('plugins_loaded', static function (): void {
-            $plugin = FPP_HN_Plugin::instance();
-            if (method_exists($plugin, 'init')) {
-                $plugin->init();
-            }
-        });
-    }
-}
+add_action('admin_menu', 'fpp_hn_register_admin_menu');
+add_shortcode('fpp_help_navigator', 'fpp_hn_render_shortcode');
